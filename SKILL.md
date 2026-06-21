@@ -5,109 +5,89 @@ description: Enforce an Anti-AI Style Gate when designing, implementing, rewriti
 
 # Aesthetic Skill CN
 
-Aesthetic Skill CN is an Anti-AI Style Gate for Chinese Product UI.
+Aesthetic Skill CN is a constrained Anti-AI Style Gate for Chinese Product UI.
 
-Do not merely make output prettier. Force product reality into the structure, copy, states, and actions. If output fails a gate, do not present it as final.
+Do not trust free-form UI generation. Control the page type, structure, modules, states, actions, and visual direction before producing final output.
 
-## Phase 1: Product Read
+## Hard pre-generation lock
 
-Infer:
-
-- product type and platform
-- target user and operating context
-- primary business object
-- decision the page supports
-- real workflow that must be visible
-- likely AI-slop risks
-- requested deliverable: specification, review, before / after, or implemented page
-
-Produce internally:
+Do not generate a final UI until all six fields are selected and recorded:
 
 ```text
-Reading this as: <product type> for <target user>,
-using <real workflow>,
-avoiding <AI-style risks>.
+Contract:
+Page type:
+Layout skeleton:
+Modules:
+Required states:
+User actions:
 ```
 
-Do not replace missing product facts with generic SaaS assumptions. Ask one focused question only when different answers would materially change the workflow.
+If any generated module falls outside the selected contract, the output fails.
 
-## Phase 2: Product Reality Audit
+## Controller workflow
 
-Read and complete [rules/PRODUCT_REALITY_AUDIT.md](rules/PRODUCT_REALITY_AUDIT.md).
+Follow every step in order.
 
-Block generation until the audit names a user, decision, business objects, workflow, required exception state, and modules that fail the Product Swap Test.
+### 1. Detect task
 
-## Phase 3: Structure Before Style
+Infer the requested deliverable, product context, target user, primary object, and decision. Complete [rules/PRODUCT_REALITY_AUDIT.md](rules/PRODUCT_REALITY_AUDIT.md).
 
-Read [rules/REAL_CONTENT_LIBRARY.md](rules/REAL_CONTENT_LIBRARY.md) and [rules/DESIGN_SYSTEM_MAP_CN.md](rules/DESIGN_SYSTEM_MAP_CN.md).
+### 2. Select output contract
 
-Select modules before choosing color, radius, shadow, chart, or page composition. Connect modules into a decision path:
+Read [contracts/OUTPUT_CONTRACTS.md](contracts/OUTPUT_CONTRACTS.md). Select exactly one contract. Free-form UI generation is not allowed.
+
+If no contract fits, ask one clarifying question instead of generating.
+
+### 3. Select allowed page type
+
+Read [contracts/ALLOWED_PAGE_TYPES.md](contracts/ALLOWED_PAGE_TYPES.md). Select one page type. Treat Finance Terminal as WIP / advanced, not public proof.
+
+### 4. Select layout skeleton
+
+Read [contracts/LAYOUT_SKELETONS.md](contracts/LAYOUT_SKELETONS.md). Select one compatible skeleton. Do not add or reorder major regions without a product reason.
+
+### 5. Lock modules
+
+Read [contracts/MODULE_LOCKS.md](contracts/MODULE_LOCKS.md) and [rules/REAL_CONTENT_LIBRARY.md](rules/REAL_CONTENT_LIBRARY.md). Define every visible module using:
 
 ```text
-check source → compare change → inspect risk → decide → record action → revisit later
+Module / Purpose / User action / State / Next step / Banned fallback
 ```
 
-Use only the relevant platform rules from [PLATFORM_RULES_CN.md](PLATFORM_RULES_CN.md). Read a preset `DESIGN.md` only when its category matches; presets are subordinate to the product-reality audit.
+Do not invent generic insight, overview, recommendation, engagement, trend, or performance modules.
 
-## Phase 4: Chinese UI Dials
+### 6. Set Chinese UI dials
 
-Read [rules/CHINESE_UI_DIALS.md](rules/CHINESE_UI_DIALS.md). Set:
+Read [rules/CHINESE_UI_DIALS.md](rules/CHINESE_UI_DIALS.md). Set `PRODUCT_REALISM`, `VISUAL_DENSITY`, and `VISUAL_RESTRAINT` from the selected page type defaults.
 
-- `PRODUCT_REALISM`
-- `VISUAL_DENSITY`
-- `VISUAL_RESTRAINT`
+### 7. Generate three constrained directions
 
-Use the preset defaults unless the product context justifies a change. Never lower realism to create a cleaner screenshot.
+Read [contracts/STYLE_DIRECTION_PROTOCOL.md](contracts/STYLE_DIRECTION_PROTOCOL.md). Propose three directions inside the same contract. Vary emphasis, density, or module priority, not page type or unlocked modules.
 
-For `1440 × 1200` proof pages, also apply [rules/VISUAL_DENSITY_RULES.md](rules/VISUAL_DENSITY_RULES.md).
+Do not generate full HTML for all three directions unless requested.
 
-## Phase 5: Generate Output
+### 8. Choose one direction
 
-Generate the requested artifact around the selected workflow.
+When interactive, ask the user to choose. When autonomous, choose the direction with the clearest decision path, strongest negative-state handling, least decorative chrome, and highest Product Swap resistance.
 
-Required behavior:
+### 9. Generate output
 
-- use natural Chinese product copy
-- identify units, time, source, ownership, and limitations where relevant
-- show a pending, warning, failed, risk, changed, unchanged, or needs-review state
-- give every major module a user action or decision purpose
-- label invented data as sample data
-- preserve existing functionality unless the request authorizes change
-- make responsive behavior explicit for implemented UI
+Generate only the chosen direction. Apply [rules/COPY_SELF_AUDIT_CN.md](rules/COPY_SELF_AUDIT_CN.md), relevant platform rules, and [rules/VISUAL_DENSITY_RULES.md](rules/VISUAL_DENSITY_RULES.md) for proof pages.
 
-Read [rules/COPY_SELF_AUDIT_CN.md](rules/COPY_SELF_AUDIT_CN.md) whenever visible Chinese copy is generated.
+Preserve existing functionality unless change is authorized. Label invented data as sample data. Make responsive behavior explicit.
 
-## Phase 6: Anti-AI Style Gate
+### 10. Run Anti-AI Style Gate
 
-Run every test in [gates/ANTI_AI_STYLE_GATE.md](gates/ANTI_AI_STYLE_GATE.md). Search copy using [gates/BANNED_AI_PATTERNS_CN.md](gates/BANNED_AI_PATTERNS_CN.md).
+Run [gates/ANTI_AI_STYLE_GATE.md](gates/ANTI_AI_STYLE_GATE.md) and search copy with [gates/BANNED_AI_PATTERNS_CN.md](gates/BANNED_AI_PATTERNS_CN.md).
 
-One failed test means the output fails. Visual polish does not override a failure.
+Also audit every visible top-level module against the locked module list. One unmatched module fails.
 
-## Phase 7: Rewrite If Failed
+### 11. Run Non-AI Style Scorecard
 
-Use [gates/OUTPUT_REWRITE_PROTOCOL.md](gates/OUTPUT_REWRITE_PROTOCOL.md).
+Use [gates/NON_AI_STYLE_SCORECARD.md](gates/NON_AI_STYLE_SCORECARD.md). Require average `>= 8.0 / 10` and every category `>= 6 / 10`.
 
-List the top three failures, rewrite product structure and copy, add relevant real states, remove decorative cards, regenerate, and rerun all gates. Maximum: three passes.
+### 12. Rewrite if failed
 
-Do not show a failed candidate as final. After three failed passes, report the missing product fact or implementation constraint.
+Use [gates/OUTPUT_REWRITE_PROTOCOL.md](gates/OUTPUT_REWRITE_PROTOCOL.md). Rewrite within the same contract and skeleton. Do not solve failure by adding new modules. Maximum three passes.
 
-## Phase 8: Score Before Final
-
-Score the candidate with [gates/NON_AI_STYLE_SCORECARD.md](gates/NON_AI_STYLE_SCORECARD.md).
-
-Pass only when:
-
-- average score is at least `8.0 / 10`
-- no category is below `6 / 10`
-
-Use evidence from the artifact, not intended behavior. Keep the score internal unless the user requests a review or the deliverable requires scoring.
-
-## Phase 9: Final Quality Gate
-
-Run [gates/FINAL_QUALITY_GATE_CN.md](gates/FINAL_QUALITY_GATE_CN.md) immediately before delivery.
-
-Do not deliver when the page can be renamed into another product, lacks an actionable negative state, displays data without a decision, contains banned AI copy, relies on fake precision, or looks like a prettier generic AI template.
-
-## Final rule
-
-If the output fails the gate, do not present it as final.
+Then run [gates/FINAL_QUALITY_GATE_CN.md](gates/FINAL_QUALITY_GATE_CN.md). Do not present failed output as final.

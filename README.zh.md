@@ -4,11 +4,11 @@ Most AI-generated Chinese interfaces do not fail because they are ugly.
 
 They fail because they are generic.
 
-**Aesthetic Skill CN is an Anti-AI Style Gate for Chinese Product UI.**
+**Aesthetic Skill CN is a constrained Anti-AI Style Gate for Chinese Product UI.**
 
-它不是为了把 AI 输出“做得更漂亮”。它强制 Cursor、Claude Code、Codex 等编程智能体在生成界面前检查产品现实：用户是谁、要做什么决定、必须看到什么工作流、哪些风险与待处理状态不能缺席、中文文案是否像真实产品。
+它不信任自由生成的 AI 界面，也不是为了把输出“做得更漂亮”。它先锁定输出合同、页面类型、模块和布局骨架，再允许 Cursor、Claude Code、Codex 生成界面。
 
-它不是提示词合集，也不是 UI 组件库。它是一套 AI 可读、可执行、会阻止不合格输出进入 final 的质量门。
+它不是提示词合集，也不是 UI 组件库。它是一套减少模型自由度、阻止不合格输出进入 final 的约束系统。
 
 > 如果换个产品名还能用，输出失败。
 
@@ -16,11 +16,12 @@ They fail because they are generic.
 
 ## 目录
 
-- [Before / After 展示](#before--after-展示)
 - [五个核心机制](#五个核心机制)
+- [六层生成约束](#六层生成约束)
 - [它解决什么问题](#它解决什么问题)
 - [为什么 AI 生成的中文 UI 总有一股“假”味](#为什么-ai-生成的中文-ui-总有一股假味)
 - [它如何工作](#它如何工作)
+- [实验性案例](#实验性案例)
 - [内置风格预设](#内置风格预设)
 - [交付模式](#交付模式)
 - [如何使用](#如何使用)
@@ -30,6 +31,21 @@ They fail because they are generic.
 - [示例提示词](#示例提示词)
 - [伦理与使用边界](#伦理与使用边界)
 - [路线图](#路线图)
+
+---
+
+## 六层生成约束
+
+每次输出必须依次通过：
+
+1. **Output Contract**：固定目标用户、决策、状态、动作和通过标准。
+2. **Allowed Page Type**：v0.2 只允许小红书创作者工作台、AI 人工复核流程和本地服务落地页。金融工作台为高级 WIP。
+3. **Module Lock**：只能使用合同允许的真实业务模块，禁止临时发明 `Smart Insights` 或 `增长概览`。
+4. **Layout Skeleton**：从固定工作台、复核队列、日历详情或本地服务骨架中选择，不能自由拼版。
+5. **Anti-AI Style Gate**：执行 Product Swap、假 Dashboard、装饰预览和工作流现实检查。
+6. **Rewrite Protocol**：失败后必须在同一合同和骨架内重写，不能靠增加装饰或新模块逃避问题。
+
+**Free-form UI generation is not allowed.** 如果没有合同适配，智能体必须先问一个澄清问题，而不是生成页面。
 
 ---
 
@@ -54,66 +70,6 @@ They fail because they are generic.
 ### 5. Rewrite Until Pass
 
 不通过 [Anti-AI Style Gate](gates/ANTI_AI_STYLE_GATE.md)，不能输出 final。最多重写三轮，每轮先列出最严重的三个失败原因。
-
----
-
-## Before / After 展示
-
-同一个业务场景、同一内容规模、同一桌面视口。这里比较的不是“换了什么颜色”，而是 AI 是否真正理解产品任务、信息结构和中文语境。
-
-### 港股投资 Dashboard
-
-v0.1 的核心示例。它需要让用户第一眼看出这是投资研究与交易复盘工具，而不是普通数据 Dashboard。
-
-#### Before
-
-![改造前的港股投资 Dashboard，包含过多指标卡、随机上涨图表和全正面状态](examples/before-after/hongkong-stock-dashboard/screenshot-before.png)
-
-**问题：** 一墙 KPI、随机向上图表和全绿色状态制造“表现很好”的假象；没有买入理由、卖出条件、风险提醒、投资逻辑追踪或交易复盘。
-
-#### After
-
-![改造后的港股投资研究与交易复盘工作台，包含买入理由、卖出条件、投资逻辑和风险提醒](examples/before-after/hongkong-stock-dashboard/screenshot-after.png)
-
-**改进：** 先呈现组合纪律与异常，再把持仓连接到买入理由、卖出条件、估值区间、催化剂、风险提醒和 Thesis Tracker；负收益、停牌、逻辑减弱与数据缺失成为正式状态。
-
-[查看完整设计说明](examples/before-after/hongkong-stock-dashboard/notes.md)
-
-### AI SaaS Landing Page
-
-#### Before
-
-![改造前的通用 AI SaaS 页面，使用空洞口号、虚假效率指标与无业务含义的功能卡片](examples/before-after/ai-saas-landing/screenshot-before.png)
-
-**问题：** “重新定义生产力”和“效率提升”没有业务对象、证据或工作流，页面可以替换成任何 AI 产品名称。
-
-#### After
-
-![改造后的 AI 合同审阅产品页，展示真实输入、结构化输出、复核队列和审计工作流](examples/before-after/ai-saas-landing/screenshot-after.png)
-
-**改进：** 明确服务法务与采购团队，围绕合同审阅展示输入材料、条款差异、引用依据、任务复核队列和审计记录，让 AI 输出可检查、可分派、可追责。
-
-[查看完整设计说明](examples/before-after/ai-saas-landing/notes.md)
-
-### 小红书内容日历
-
-#### Before
-
-![改造前的内容增长工具，使用一键爆款、虚荣指标和泛化 AI 建议](examples/before-after/xiaohongshu-content-calendar/screenshot-before.png)
-
-**问题：** “一键爆款”承诺无法验证，数据面板没有创作者真正需要的排期、封面、负责人、审批和合作交付状态。
-
-#### After
-
-![改造后的小红书创作者工作台，展示排期、选题、封面测试、复盘、审批和品牌合作](examples/before-after/xiaohongshu-content-calendar/screenshot-after.png)
-
-**改进：** 把内容日历连接到选题库、笔记状态、封面与标题测试、发布节奏、爆文复盘和品牌合作 CRM，让每条内容都有明确的下一步。
-
-[查看完整设计说明](examples/before-after/xiaohongshu-content-calendar/notes.md)
-
-截图脚本同时生成 `390 × 844` 的移动端版本，用于响应式 QA；主 README 暂时只展示桌面截图，避免画廊过重。
-
----
 
 ## 它解决什么问题
 
@@ -188,26 +144,28 @@ AI 经常从“现代 SaaS”开始，于是自动得到渐变、玻璃卡片、
 
 ## 它如何工作
 
-`SKILL.md` 是入口，也是智能体的执行路由。每次任务遵循九个阶段：
+`SKILL.md` 是控制器。每次任务遵循十二步约束流程：
 
 ```text
-读取产品、用户、决定与 AI 风险
+识别任务与产品现实
     ↓
-执行 Product Reality Audit
+选择一个 Output Contract
     ↓
-先选择真实业务模块，再选择结构
+选择允许的 Page Type
     ↓
-设置产品真实性、视觉密度、视觉克制
+选择固定 Layout Skeleton
     ↓
-生成指定交付物
+锁定 Modules、States 与 Actions
     ↓
-运行 Anti-AI Style Gate
+设置 Chinese UI Dials
     ↓
-失败则按协议重写，最多三轮
+生成 3 个受约束方向
     ↓
-使用 Non-AI Style Scorecard 评分
+选择 1 个方向并生成
     ↓
-运行最终中文质量门
+运行 Anti-AI Style Gate 与 Scorecard
+    ↓
+失败则在同一合同内重写
 ```
 
 它不是一个“万能 Prompt”。规则通过渐进式读取组织：智能体先读取核心工作流，再按产品类型加载相关平台规则、风格预设和交付要求，不需要把整套仓库一次塞进上下文。
@@ -215,6 +173,11 @@ AI 经常从“现代 SaaS”开始，于是自动得到渐变、玻璃卡片、
 核心文件：
 
 - [`SKILL.md`](SKILL.md)：智能体工作流与质量门槛
+- [`contracts/OUTPUT_CONTRACTS.md`](contracts/OUTPUT_CONTRACTS.md)：禁止自由生成，要求先选择唯一输出合同
+- [`contracts/ALLOWED_PAGE_TYPES.md`](contracts/ALLOWED_PAGE_TYPES.md)：限定公开页面类型、状态与动作
+- [`contracts/MODULE_LOCKS.md`](contracts/MODULE_LOCKS.md)：锁定可见模块并阻止通用模块回退
+- [`contracts/LAYOUT_SKELETONS.md`](contracts/LAYOUT_SKELETONS.md)：固定页面骨架与区域顺序
+- [`contracts/STYLE_DIRECTION_PROTOCOL.md`](contracts/STYLE_DIRECTION_PROTOCOL.md)：先生成三个受约束方向，再选择一个
 - [`gates/ANTI_AI_STYLE_GATE.md`](gates/ANTI_AI_STYLE_GATE.md)：Product Swap、假 Dashboard、卡片堆叠、装饰预览等硬失败测试
 - [`gates/NON_AI_STYLE_SCORECARD.md`](gates/NON_AI_STYLE_SCORECARD.md)：六维度 10 分制通过门槛
 - [`rules/PRODUCT_REALITY_AUDIT.md`](rules/PRODUCT_REALITY_AUDIT.md)：生成前的产品现实审计
@@ -224,6 +187,21 @@ AI 经常从“现代 SaaS”开始，于是自动得到渐变、玻璃卡片、
 - [`PLATFORM_RULES_CN.md`](PLATFORM_RULES_CN.md)：中文平台与业务环境差异
 - [`COPYWRITING_RULES_CN.md`](COPYWRITING_RULES_CN.md)：自然、具体、可执行的中文产品文案
 - [`SCORECARD.md`](SCORECARD.md)：六维度、30 分制交付评分
+
+---
+
+## 实验性案例
+
+仓库保留 Before / After 页面和文本质量案例，用于测试合同是否能落到真实结构中。这些案例仍在迭代，不代表系统本身。
+
+- [小红书内容排期](examples/before-after/xiaohongshu-content-calendar/)：测试选题、封面、审批、排期和品牌合作流程。
+- [AI 合同审阅](examples/before-after/ai-saas-landing/)：测试输入、输出、证据、人工复核和审计记录。
+- `Local Business Clean`：属于公开 v0.2 合同，当前只定义约束，不新增视觉示例。
+- [港股投资 Dashboard（实验）](examples/before-after/hongkong-stock-dashboard/)：测试 Thesis、卖出条件、风险触发和交易复盘。金融规则会继续保留并迭代，但该案例不作为公开 Hero proof。
+
+文本案例：[Rejected AI Dashboard](examples/quality-cases/rejected-ai-dashboard.md) · [Golden Xiaohongshu Workbench](examples/quality-cases/golden-xiaohongshu-workbench.md) · [Golden AI Review Workflow](examples/quality-cases/golden-ai-review-workflow.md)
+
+截图仅用于案例 QA，不在 README 首屏承担项目定位。
 
 ---
 
@@ -366,6 +344,7 @@ Use $aesthetic-skill-cn in Full Page Mode.
 ```text
 aesthetic-skill-cn/
 ├── SKILL.md                    # 智能体入口与执行工作流
+├── contracts/                  # 输出合同、允许类型、模块锁与固定骨架
 ├── gates/                      # 生成后的硬失败测试、重写协议与最终质量门
 ├── rules/                      # 生成前的产品现实、模块、密度与文案规则
 ├── AESTHETIC_STANDARD.md       # 中文产品 UI 质量标准
@@ -383,6 +362,7 @@ aesthetic-skill-cn/
 │   └── dark-devtool/
 ├── examples/
 │   ├── before-after/           # 结构改造示例
+│   ├── quality-cases/          # rejected / golden 文本案例
 │   └── ui-reviews/             # 评审示例
 ├── docs/                       # 安装、工具使用与贡献说明
 └── scripts/                    # 预览、导出与截图辅助脚本
