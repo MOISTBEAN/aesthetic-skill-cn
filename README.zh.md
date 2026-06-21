@@ -1,18 +1,23 @@
-# 别再生成假的 SaaS 界面了。
+# 别再交付一眼 AI 味的中文界面了。
 
-## 让 AI 写出来的中文软件界面，终于有产品感。
+Most AI-generated Chinese interfaces do not fail because they are ugly.
 
-**Aesthetic Skill CN** 是一个让 Cursor / Claude Code / Codex 懂中文软件审美的设计 Skill。
+They fail because they are generic.
 
-它不是提示词合集，也不是 UI 组件库。它是一套给编程智能体读取和执行的设计判断系统：先识别产品类型与交付模式，再选择风格预设，应用中文平台规则、信息层级、真实业务细节和自然中文文案，最后用统一评分卡自检。
+**Aesthetic Skill CN is an Anti-AI Style Gate for Chinese Product UI.**
 
-> Stop generating fake SaaS UI. Start building real Chinese product interfaces.
+它不是为了把 AI 输出“做得更漂亮”。它强制 Cursor、Claude Code、Codex 等编程智能体在生成界面前检查产品现实：用户是谁、要做什么决定、必须看到什么工作流、哪些风险与待处理状态不能缺席、中文文案是否像真实产品。
 
-[English README](README.md) · [开始使用](#如何使用) · [查看风格预设](#内置风格预设) · [阅读 SKILL.md](SKILL.md)
+它不是提示词合集，也不是 UI 组件库。它是一套 AI 可读、可执行、会阻止不合格输出进入 final 的质量门。
+
+> 如果换个产品名还能用，输出失败。
+
+[English README](README.md) · [开始使用](#如何使用) · [运行质量门](gates/ANTI_AI_STYLE_GATE.md) · [阅读 SKILL.md](SKILL.md)
 
 ## 目录
 
 - [Before / After 展示](#before--after-展示)
+- [五个核心机制](#五个核心机制)
 - [它解决什么问题](#它解决什么问题)
 - [为什么 AI 生成的中文 UI 总有一股“假”味](#为什么-ai-生成的中文-ui-总有一股假味)
 - [它如何工作](#它如何工作)
@@ -28,6 +33,30 @@
 
 ---
 
+## 五个核心机制
+
+### 1. Product Swap Test
+
+如果换个产品名、Logo 和主题色还能用，输出失败。界面必须包含无法被另一类产品直接复用的业务模块。
+
+### 2. Banned AI Defaults
+
+禁止用蓝紫渐变、假 Dashboard、六张等权功能卡、翻译腔文案、假精确数字和装饰性产品预览代替产品结构。
+
+### 3. Real Workflow Requirement
+
+每个页面必须包含 `check / compare / approve / review / decide` 中至少一种真实动作，并明确对象、状态和下一步。
+
+### 4. Negative State Requirement
+
+不能全是正面状态。必须出现与业务相关的 `pending / warning / failed / risk / changed / needs review`，并提供复核或恢复动作。
+
+### 5. Rewrite Until Pass
+
+不通过 [Anti-AI Style Gate](gates/ANTI_AI_STYLE_GATE.md)，不能输出 final。最多重写三轮，每轮先列出最严重的三个失败原因。
+
+---
+
 ## Before / After 展示
 
 同一个业务场景、同一内容规模、同一桌面视口。这里比较的不是“换了什么颜色”，而是 AI 是否真正理解产品任务、信息结构和中文语境。
@@ -36,58 +65,49 @@
 
 v0.1 的核心示例。它需要让用户第一眼看出这是投资研究与交易复盘工具，而不是普通数据 Dashboard。
 
-<table>
-  <tr>
-    <th width="50%">Before</th>
-    <th width="50%">After</th>
-  </tr>
-  <tr>
-    <td><img src="examples/before-after/hongkong-stock-dashboard/screenshot-before.png" alt="改造前的港股投资 Dashboard，包含过多指标卡、随机上涨图表和全正面状态"></td>
-    <td><img src="examples/before-after/hongkong-stock-dashboard/screenshot-after.png" alt="改造后的港股投资研究与交易复盘工作台，包含买入理由、卖出条件、投资逻辑和风险提醒"></td>
-  </tr>
-  <tr>
-    <td><strong>问题：</strong>一墙 KPI、随机向上图表和全绿色状态制造“表现很好”的假象；没有买入理由、卖出条件、风险提醒、投资逻辑追踪或交易复盘。</td>
-    <td><strong>改进：</strong>先呈现组合纪律与异常，再把持仓连接到买入理由、卖出条件、估值区间、风险提醒和 Thesis Tracker；负收益、停牌、逻辑减弱与数据缺失成为正式状态。</td>
-  </tr>
-</table>
+#### Before
+
+![改造前的港股投资 Dashboard，包含过多指标卡、随机上涨图表和全正面状态](examples/before-after/hongkong-stock-dashboard/screenshot-before.png)
+
+**问题：** 一墙 KPI、随机向上图表和全绿色状态制造“表现很好”的假象；没有买入理由、卖出条件、风险提醒、投资逻辑追踪或交易复盘。
+
+#### After
+
+![改造后的港股投资研究与交易复盘工作台，包含买入理由、卖出条件、投资逻辑和风险提醒](examples/before-after/hongkong-stock-dashboard/screenshot-after.png)
+
+**改进：** 先呈现组合纪律与异常，再把持仓连接到买入理由、卖出条件、估值区间、催化剂、风险提醒和 Thesis Tracker；负收益、停牌、逻辑减弱与数据缺失成为正式状态。
 
 [查看完整设计说明](examples/before-after/hongkong-stock-dashboard/notes.md)
 
 ### AI SaaS Landing Page
 
-<table>
-  <tr>
-    <th width="50%">Before</th>
-    <th width="50%">After</th>
-  </tr>
-  <tr>
-    <td><img src="examples/before-after/ai-saas-landing/screenshot-before.png" alt="改造前的通用 AI SaaS 页面，使用空洞口号与虚假效率指标"></td>
-    <td><img src="examples/before-after/ai-saas-landing/screenshot-after.png" alt="改造后的 AI 合同审阅界面，显示条款差异、来源依据和人工复核操作"></td>
-  </tr>
-  <tr>
-    <td><strong>问题：</strong>“重新定义生产力”和“效率提升”没有业务对象、证据或工作流，页面可以替换成任何 AI 产品名称。</td>
-    <td><strong>改进：</strong>围绕真实合同审阅任务展示条款差异、引用依据、待确认项和“提交复核”，让 AI 输出处于可检查、可负责的工作流中。</td>
-  </tr>
-</table>
+#### Before
+
+![改造前的通用 AI SaaS 页面，使用空洞口号、虚假效率指标与无业务含义的功能卡片](examples/before-after/ai-saas-landing/screenshot-before.png)
+
+**问题：** “重新定义生产力”和“效率提升”没有业务对象、证据或工作流，页面可以替换成任何 AI 产品名称。
+
+#### After
+
+![改造后的 AI 合同审阅产品页，展示真实输入、结构化输出、复核队列和审计工作流](examples/before-after/ai-saas-landing/screenshot-after.png)
+
+**改进：** 明确服务法务与采购团队，围绕合同审阅展示输入材料、条款差异、引用依据、任务复核队列和审计记录，让 AI 输出可检查、可分派、可追责。
 
 [查看完整设计说明](examples/before-after/ai-saas-landing/notes.md)
 
 ### 小红书内容日历
 
-<table>
-  <tr>
-    <th width="50%">Before</th>
-    <th width="50%">After</th>
-  </tr>
-  <tr>
-    <td><img src="examples/before-after/xiaohongshu-content-calendar/screenshot-before.png" alt="改造前的内容增长工具，使用一键爆款和创作神器等空泛文案"></td>
-    <td><img src="examples/before-after/xiaohongshu-content-calendar/screenshot-after.png" alt="改造后的小红书内容排期工具，显示封面、标题、负责人、状态和发布时间"></td>
-  </tr>
-  <tr>
-    <td><strong>问题：</strong>“一键爆款”承诺无法验证，也没有创作者真正需要的排期、封面、负责人和复核状态。</td>
-    <td><strong>改进：</strong>把内容日历变成可操作的创作者工作台，明确标题、封面、负责人、发布时间、审核状态和移动端预览。</td>
-  </tr>
-</table>
+#### Before
+
+![改造前的内容增长工具，使用一键爆款、虚荣指标和泛化 AI 建议](examples/before-after/xiaohongshu-content-calendar/screenshot-before.png)
+
+**问题：** “一键爆款”承诺无法验证，数据面板没有创作者真正需要的排期、封面、负责人、审批和合作交付状态。
+
+#### After
+
+![改造后的小红书创作者工作台，展示排期、选题、封面测试、复盘、审批和品牌合作](examples/before-after/xiaohongshu-content-calendar/screenshot-after.png)
+
+**改进：** 把内容日历连接到选题库、笔记状态、封面与标题测试、发布节奏、爆文复盘和品牌合作 CRM，让每条内容都有明确的下一步。
 
 [查看完整设计说明](examples/before-after/xiaohongshu-content-calendar/notes.md)
 
@@ -168,24 +188,26 @@ AI 经常从“现代 SaaS”开始，于是自动得到渐变、玻璃卡片、
 
 ## 它如何工作
 
-`SKILL.md` 是入口，也是智能体的执行路由。每次设计任务遵循八步流程：
+`SKILL.md` 是入口，也是智能体的执行路由。每次任务遵循九个阶段：
 
 ```text
-识别交付模式
+读取产品、用户、决定与 AI 风险
     ↓
-识别产品类型、用户、任务与业务对象
+执行 Product Reality Audit
     ↓
-选择一个风格预设
+先选择真实业务模块，再选择结构
     ↓
-读取对应 DESIGN.md
+设置产品真实性、视觉密度、视觉克制
     ↓
-应用中文平台规则与中文文案规则
+生成指定交付物
     ↓
-执行 Anti-AI-Slop 删除检查
+运行 Anti-AI Style Gate
     ↓
-生成设计、评审、对照或完整页面
+失败则按协议重写，最多三轮
     ↓
-使用 SCORECARD.md 自检并修正
+使用 Non-AI Style Scorecard 评分
+    ↓
+运行最终中文质量门
 ```
 
 它不是一个“万能 Prompt”。规则通过渐进式读取组织：智能体先读取核心工作流，再按产品类型加载相关平台规则、风格预设和交付要求，不需要把整套仓库一次塞进上下文。
@@ -193,6 +215,10 @@ AI 经常从“现代 SaaS”开始，于是自动得到渐变、玻璃卡片、
 核心文件：
 
 - [`SKILL.md`](SKILL.md)：智能体工作流与质量门槛
+- [`gates/ANTI_AI_STYLE_GATE.md`](gates/ANTI_AI_STYLE_GATE.md)：Product Swap、假 Dashboard、卡片堆叠、装饰预览等硬失败测试
+- [`gates/NON_AI_STYLE_SCORECARD.md`](gates/NON_AI_STYLE_SCORECARD.md)：六维度 10 分制通过门槛
+- [`rules/PRODUCT_REALITY_AUDIT.md`](rules/PRODUCT_REALITY_AUDIT.md)：生成前的产品现实审计
+- [`rules/REAL_CONTENT_LIBRARY.md`](rules/REAL_CONTENT_LIBRARY.md)：金融、创作者和 AI 审阅产品的真实模块库
 - [`AESTHETIC_STANDARD.md`](AESTHETIC_STANDARD.md)：什么是有产品感的中文 UI
 - [`ANTI_AI_SLOP.md`](ANTI_AI_SLOP.md)：Bad / Better / Why 反模式检查
 - [`PLATFORM_RULES_CN.md`](PLATFORM_RULES_CN.md)：中文平台与业务环境差异
@@ -340,6 +366,8 @@ Use $aesthetic-skill-cn in Full Page Mode.
 ```text
 aesthetic-skill-cn/
 ├── SKILL.md                    # 智能体入口与执行工作流
+├── gates/                      # 生成后的硬失败测试、重写协议与最终质量门
+├── rules/                      # 生成前的产品现实、模块、密度与文案规则
 ├── AESTHETIC_STANDARD.md       # 中文产品 UI 质量标准
 ├── ANTI_AI_SLOP.md             # AI 模板化反模式
 ├── STYLE_PRESETS.md            # 风格选择规则

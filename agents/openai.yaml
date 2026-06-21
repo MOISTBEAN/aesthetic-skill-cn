@@ -1,4 +1,4 @@
 interface:
   display_name: "Aesthetic Skill CN"
-  short_description: "Design credible Chinese product interfaces"
-  default_prompt: "Use $aesthetic-skill-cn to design a product-grade Chinese interface for this project."
+  short_description: "Block generic AI-looking Chinese product UI"
+  default_prompt: "Use $aesthetic-skill-cn to audit this Chinese product UI, rewrite any generic AI patterns, and release it only after every gate passes."

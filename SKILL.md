@@ -1,121 +1,113 @@
 ---
 name: aesthetic-skill-cn
-description: Design, implement, or review product-grade Chinese software interfaces for Web SaaS, Xiaohongshu and Douyin creator tools, finance and investment dashboards, WeChat H5, local-business pages, and Feishu-style enterprise tools. Use when a coding agent must select a credible visual direction, write natural Chinese UI copy, replace generic foreign SaaS patterns, produce a DESIGN.md, review an existing UI, create a before/after redesign, or build a full page.
+description: Enforce an Anti-AI Style Gate when designing, implementing, rewriting, or reviewing Chinese product UI. Use for Chinese Web SaaS, finance research dashboards, Xiaohongshu creator tools, enterprise workspaces, local-business interfaces, and other product surfaces that must avoid fake SaaS copy, generic dashboards, card-grid slop, decorative previews, translated Chinese, unsupported metrics, and generic AI visual tells.
 ---
 
 # Aesthetic Skill CN
 
-Stop generating fake SaaS UI. Start building real Chinese product interfaces.
+Aesthetic Skill CN is an Anti-AI Style Gate for Chinese Product UI.
 
-别再生成假的 SaaS 界面了。让 AI 写出来的中文软件界面，终于有产品感。
+Do not merely make output prettier. Force product reality into the structure, copy, states, and actions. If output fails a gate, do not present it as final.
 
-Treat every request as product design work, not as a request to decorate rectangles. Make the interface specific to its business, users, platform, and operating state.
+## Phase 1: Product Read
 
-## Workflow map
+Infer:
 
-- [Required workflow](#required-workflow)
-- [Working principle](#working-principle)
+- product type and platform
+- target user and operating context
+- primary business object
+- decision the page supports
+- real workflow that must be visible
+- likely AI-slop risks
+- requested deliverable: specification, review, before / after, or implemented page
 
-## Required workflow
+Produce internally:
 
-Follow these steps in order. Do not begin visual styling before steps 1–4 are resolved.
+```text
+Reading this as: <product type> for <target user>,
+using <real workflow>,
+avoiding <AI-style risks>.
+```
 
-### 1. Detect the deliverable mode
+Do not replace missing product facts with generic SaaS assumptions. Ask one focused question only when different answers would materially change the workflow.
 
-Read [DELIVERABLE_MODES.md](DELIVERABLE_MODES.md). Select exactly one primary mode:
+## Phase 2: Product Reality Audit
 
-- `DESIGN.md Mode` for a reusable design specification.
-- `UI Review Mode` for diagnosis and prioritized corrections.
-- `Before / After Mode` for an explicit transformation.
-- `Full Page Mode` for implemented or implementation-ready UI.
+Read and complete [rules/PRODUCT_REALITY_AUDIT.md](rules/PRODUCT_REALITY_AUDIT.md).
 
-Infer the mode from the request. If the user asks to “review” or “audit,” do not silently rebuild. If the user asks to “build,” do not stop at advice.
+Block generation until the audit names a user, decision, business objects, workflow, required exception state, and modules that fail the Product Swap Test.
 
-### 2. Detect the product category
+## Phase 3: Structure Before Style
 
-Name the category in one concrete phrase before designing. Prefer “小红书三人内容团队的排期工具” over “创作者 SaaS.”
+Read [rules/REAL_CONTENT_LIBRARY.md](rules/REAL_CONTENT_LIBRARY.md) and [rules/DESIGN_SYSTEM_MAP_CN.md](rules/DESIGN_SYSTEM_MAP_CN.md).
 
-Classify it as one of the following, or state a more precise category:
+Select modules before choosing color, radius, shadow, chart, or page composition. Connect modules into a decision path:
 
-- Web SaaS / operations workspace
-- Xiaohongshu or Douyin creator tool
-- Finance or investment dashboard
-- WeChat H5 / mobile web flow
-- Local-business service page
-- Feishu / enterprise tool
-- Developer tool
+```text
+check source → compare change → inspect risk → decide → record action → revisit later
+```
 
-Identify the primary user, repeated task, decision they must make, and business object they act on. Examples of business objects: 合同、选题、组合持仓、客户线索、预约单、审批单、接口请求.
+Use only the relevant platform rules from [PLATFORM_RULES_CN.md](PLATFORM_RULES_CN.md). Read a preset `DESIGN.md` only when its category matches; presets are subordinate to the product-reality audit.
 
-### 3. Select one style preset
+## Phase 4: Chinese UI Dials
 
-Read [STYLE_PRESETS.md](STYLE_PRESETS.md). Select one base preset:
+Read [rules/CHINESE_UI_DIALS.md](rules/CHINESE_UI_DIALS.md). Set:
 
-- `premium-ai-saas`
-- `finance-terminal`
-- `xiaohongshu-creator-tool`
-- `local-business-clean`
-- `dark-devtool`
+- `PRODUCT_REALISM`
+- `VISUAL_DENSITY`
+- `VISUAL_RESTRAINT`
 
-Do not blend presets merely to add variety. Borrow a rule from a second preset only when a product requirement demands it, such as using tabular numerals inside an otherwise light enterprise workspace.
+Use the preset defaults unless the product context justifies a change. Never lower realism to create a cleaner screenshot.
 
-### 4. Read the preset DESIGN.md
+For `1440 × 1200` proof pages, also apply [rules/VISUAL_DENSITY_RULES.md](rules/VISUAL_DENSITY_RULES.md).
 
-Open `design-md/<preset>/DESIGN.md` and treat it as the local visual contract. Use its hierarchy, density, typography, color, surface, and interaction direction.
+## Phase 5: Generate Output
 
-If the task is `DESIGN.md Mode`, use the preset as a starting point and produce a product-specific specification; do not copy it unchanged.
+Generate the requested artifact around the selected workflow.
 
-### 5. Apply Chinese platform rules
+Required behavior:
 
-Read the matching section in [PLATFORM_RULES_CN.md](PLATFORM_RULES_CN.md). Apply platform conventions before visual polish:
+- use natural Chinese product copy
+- identify units, time, source, ownership, and limitations where relevant
+- show a pending, warning, failed, risk, changed, unchanged, or needs-review state
+- give every major module a user action or decision purpose
+- label invented data as sample data
+- preserve existing functionality unless the request authorizes change
+- make responsive behavior explicit for implemented UI
 
-- realistic Chinese text length and terminology
-- desktop versus mobile information density
-- local identity, phone, address, currency, time, consent, and sharing patterns
-- platform-specific creation, review, approval, or transaction states
+Read [rules/COPY_SELF_AUDIT_CN.md](rules/COPY_SELF_AUDIT_CN.md) whenever visible Chinese copy is generated.
 
-Do not make every Chinese product look like a translated US marketing site.
+## Phase 6: Anti-AI Style Gate
 
-### 6. Apply the aesthetic standard and anti-slop rules
+Run every test in [gates/ANTI_AI_STYLE_GATE.md](gates/ANTI_AI_STYLE_GATE.md). Search copy using [gates/BANNED_AI_PATTERNS_CN.md](gates/BANNED_AI_PATTERNS_CN.md).
 
-Read [AESTHETIC_STANDARD.md](AESTHETIC_STANDARD.md) and [ANTI_AI_SLOP.md](ANTI_AI_SLOP.md).
+One failed test means the output fails. Visual polish does not override a failure.
 
-Before generating output, remove:
+## Phase 7: Rewrite If Failed
 
-- unsupported claims and invented statistics
-- decorative feature-card grids
-- gradients, glass, emojis, or pills without semantic purpose
-- translated SaaS copy such as “释放无限潜能”
-- empty dashboard metrics that do not support a decision
+Use [gates/OUTPUT_REWRITE_PROTOCOL.md](gates/OUTPUT_REWRITE_PROTOCOL.md).
 
-Read [COPYWRITING_RULES_CN.md](COPYWRITING_RULES_CN.md) whenever the output contains Chinese product copy.
+List the top three failures, rewrite product structure and copy, add relevant real states, remove decorative cards, regenerate, and rerun all gates. Maximum: three passes.
 
-### 7. Generate the requested output
+Do not show a failed candidate as final. After three failed passes, report the missing product fact or implementation constraint.
 
-Build around a real task and representative data. Include the states the user will actually encounter: loading, empty, error, no permission, stale data, destructive confirmation, or success where relevant.
+## Phase 8: Score Before Final
 
-For implemented UI:
+Score the candidate with [gates/NON_AI_STYLE_SCORECARD.md](gates/NON_AI_STYLE_SCORECARD.md).
 
-- preserve existing functionality unless the request authorizes a change
-- use semantic HTML and accessible interaction states
-- make responsive behavior explicit
-- use charts only when a chart answers a comparison or trend question
-- keep sample data plausible and label it as sample data when necessary
+Pass only when:
 
-For written deliverables, make each recommendation executable. Replace “提升层次感” with a concrete instruction such as “将账户余额从四张卡片合并为页头摘要；风险预警保留独立区块并固定在持仓表上方.”
+- average score is at least `8.0 / 10`
+- no category is below `6 / 10`
 
-### 8. Self-review before delivery
+Use evidence from the artifact, not intended behavior. Keep the score internal unless the user requests a review or the deliverable requires scoring.
 
-Read [SCORECARD.md](SCORECARD.md) and score the result across all six dimensions. Revise any dimension below 3.
+## Phase 9: Final Quality Gate
 
-Do not deliver when:
+Run [gates/FINAL_QUALITY_GATE_CN.md](gates/FINAL_QUALITY_GATE_CN.md) immediately before delivery.
 
-- total score is below 24/30
-- `information hierarchy`, `business realism`, or `Chinese copy naturalness` is below 3
-- any critical deception, accessibility, stale-data, or financial-semantics issue remains
+Do not deliver when the page can be renamed into another product, lacks an actionable negative state, displays data without a decision, contains banned AI copy, relies on fake precision, or looks like a prettier generic AI template.
 
-Report the score only when the selected deliverable mode calls for a review. Otherwise use it silently as a quality gate.
+## Final rule
 
-## Working principle
-
-Prefer product feeling over decoration, hierarchy over color, structure over card grids, credible detail over slogans, and quiet confidence over visual noise.
+If the output fails the gate, do not present it as final.
