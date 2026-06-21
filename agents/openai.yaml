@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aesthetic Skill CN"
+  short_description: "Design credible Chinese product interfaces"
+  default_prompt: "Use $aesthetic-skill-cn to design a product-grade Chinese interface for this project."

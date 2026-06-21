@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>改造后：港股研究与持仓纪律工作台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            terminal: {
+              canvas: '#0b0e12',
+              rail: '#0e1217',
+              surface: '#11161c',
+              raised: '#171d25',
+              hover: '#1c242d',
+              line: '#27313c',
+              text: '#edf1f5',
+              secondary: '#a7b0bb',
+              muted: '#707b88',
+              blue: '#6d9eeb',
+              up: '#d86b73',
+              down: '#43b485',
+              warning: '#e1aa4b',
+              danger: '#ef7b83'
+            }
+          },
+          fontFamily: {
+            sans: ['PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'sans-serif'],
+            mono: ['SFMono-Regular', 'Consolas', 'Liberation Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-variant-numeric: tabular-nums lining-nums; }
+    * { scrollbar-color: #34414f #11161c; scrollbar-width: thin; }
+    ::selection { background: rgba(109, 158, 235, 0.28); color: #edf1f5; }
+    .discipline-ring {
+      background: conic-gradient(#e1aa4b 0 68%, #27313c 68% 100%);
+    }
+    .valuation-track {
+      background: linear-gradient(90deg, #1c242d 0 28%, rgba(67,180,133,.25) 28% 66%, #1c242d 66% 100%);
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid #8ab4f8;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] bg-terminal-canvas font-sans text-terminal-text antialiased">
+  <div class="min-h-[100dvh] lg:grid lg:grid-cols-[224px_minmax(0,1fr)]">
+    <aside class="hidden border-r border-terminal-line bg-terminal-rail lg:flex lg:flex-col">
+      <div class="border-b border-terminal-line px-5 py-5">
+        <div class="flex items-center gap-3">
+          <div class="grid h-9 w-9 place-items-center rounded-md border border-terminal-line bg-terminal-raised font-mono text-xs font-semibold text-terminal-blue">研</div>
+          <div>
+            <p class="text-sm font-semibold">持仓研究室</p>
+            <p class="mt-0.5 text-[11px] text-terminal-muted">示例数据</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 space-y-1 px-3 py-4 text-[13px]">
+        <a class="block rounded-md bg-terminal-raised px-3 py-2.5 font-medium text-terminal-text" href="#">组合纪律</a>
+        <a class="block rounded-md px-3 py-2.5 text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text" href="#">观察列表</a>
+        <a class="block rounded-md px-3 py-2.5 text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text" href="#">投资逻辑</a>
+        <a class="block rounded-md px-3 py-2.5 text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text" href="#">催化剂</a>
+        <a class="block rounded-md px-3 py-2.5 text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text" href="#">风险提醒</a>
+        <a class="block rounded-md px-3 py-2.5 text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text" href="#">交易复盘</a>
+      </nav>
+
+      <div class="border-t border-terminal-line p-4 text-xs">
+        <div class="rounded-md border border-terminal-line bg-terminal-surface p-3">
+          <p class="text-terminal-muted">当前研究账户</p>
+          <p class="mt-1.5 font-medium text-terminal-text">港股长期组合</p>
+          <p class="mt-1 text-terminal-secondary">基础币种：HKD</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="min-w-0">
+      <header class="sticky top-0 z-20 border-b border-terminal-line bg-terminal-canvas/95 backdrop-blur">
+        <div class="flex min-h-14 items-center justify-between gap-4 px-4 sm:px-6">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 lg:hidden">
+              <span class="rounded border border-terminal-line bg-terminal-raised px-2 py-1 text-[11px] font-medium">持仓研究室</span>
+            </div>
+            <div class="hidden items-center gap-3 text-xs lg:flex">
+              <span class="font-medium text-terminal-text">港股已收市</span>
+              <span class="h-3 w-px bg-terminal-line"></span>
+              <span class="text-terminal-warning">报价延迟 15 分钟</span>
+              <span class="h-3 w-px bg-terminal-line"></span>
+              <span class="text-terminal-secondary">HKD</span>
+              <span class="h-3 w-px bg-terminal-line"></span>
+              <span class="text-terminal-secondary">截至 16:08</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="hidden rounded-md border border-terminal-line bg-terminal-surface px-3 py-2 text-xs text-terminal-secondary hover:bg-terminal-raised hover:text-terminal-text sm:inline-flex">导入交易</button>
+            <button class="rounded-md bg-terminal-blue px-3 py-2 text-xs font-semibold text-[#08111f] active:translate-y-px">记录交易</button>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 overflow-x-auto border-t border-terminal-line px-4 py-2 text-[11px] lg:hidden">
+          <span class="shrink-0 font-medium">港股已收市</span>
+          <span class="shrink-0 text-terminal-warning">报价延迟 15 分钟</span>
+          <span class="shrink-0 text-terminal-secondary">HKD</span>
+          <span class="shrink-0 text-terminal-secondary">截至 16:08</span>
+        </div>
+      </header>
+
+      <div class="mx-auto max-w-[1560px] px-4 py-5 sm:px-6 lg:px-7">
+        <section class="grid gap-5 border-b border-terminal-line pb-5 xl:grid-cols-[260px_minmax(0,1fr)]">
+          <div class="flex items-center gap-4">
+            <div class="discipline-ring grid h-20 w-20 shrink-0 place-items-center rounded-full p-[5px]">
+              <div class="grid h-full w-full place-items-center rounded-full bg-terminal-canvas text-center">
+                <span class="font-mono text-2xl font-semibold leading-none">68</span>
+                <span class="mt-0.5 text-[9px] text-terminal-muted">纪律分</span>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-lg font-semibold tracking-tight">组合纪律</h1>
+                <span class="rounded border border-terminal-warning/40 bg-terminal-warning/10 px-1.5 py-0.5 text-[10px] text-terminal-warning">需复核</span>
+              </div>
+              <p class="mt-1 text-xs leading-5 text-terminal-secondary">基于 6 条自设规则，2 条已触发</p>
+              <button class="mt-2 text-xs font-medium text-terminal-blue hover:underline">查看纪律规则</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 border border-terminal-line bg-terminal-surface sm:grid-cols-4">
+            <div class="border-b border-r border-terminal-line px-4 py-3 sm:border-b-0">
+              <p class="text-[11px] text-terminal-muted">组合市值</p>
+              <p class="mt-1.5 font-mono text-base font-semibold">HK$ 842,680</p>
+              <p class="mt-1 text-[10px] text-terminal-secondary">未含交易费用</p>
+            </div>
+            <div class="border-b border-terminal-line px-4 py-3 sm:border-b-0 sm:border-r">
+              <p class="text-[11px] text-terminal-muted">当日浮动盈亏</p>
+              <p class="mt-1.5 font-mono text-base font-semibold text-terminal-down">-HK$ 6,420</p>
+              <p class="mt-1 text-[10px] text-terminal-down">-0.76%</p>
+            </div>
+            <div class="border-r border-terminal-line px-4 py-3">
+              <p class="text-[11px] text-terminal-muted">可用现金</p>
+              <p class="mt-1.5 font-mono text-base font-semibold">HK$ 96,300</p>
+              <p class="mt-1 text-[10px] text-terminal-secondary">占组合 11.4%</p>
+            </div>
+            <div class="px-4 py-3">
+              <p class="text-[11px] text-terminal-muted">最大单一持仓</p>
+              <p class="mt-1.5 font-mono text-base font-semibold text-terminal-warning">12.4%</p>
+              <p class="mt-1 text-[10px] text-terminal-warning">高于上限 10%</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="border-b border-terminal-line py-4">
+          <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-sm font-semibold">需要处理</h2>
+            <span class="text-[11px] text-terminal-muted">3 项</span>
+          </div>
+          <div class="grid gap-px overflow-hidden rounded-md border border-terminal-line bg-terminal-line lg:grid-cols-3">
+            <article class="bg-terminal-surface p-3.5">
+              <div class="flex items-start justify-between gap-3">
+                <div><p class="text-xs font-semibold text-terminal-danger">卖出条件已触发</p><p class="mt-1.5 text-xs leading-5 text-terminal-secondary">远岚科技：连续两个季度毛利率低于 42%</p></div>
+                <span class="shrink-0 rounded border border-terminal-danger/40 px-1.5 py-0.5 text-[10px] text-terminal-danger">高</span>
+              </div>
+              <button class="mt-3 text-xs font-medium text-terminal-blue">复核持有逻辑</button>
+            </article>
+            <article class="bg-terminal-surface p-3.5">
+              <div class="flex items-start justify-between gap-3">
+                <div><p class="text-xs font-semibold text-terminal-warning">仓位超出自设上限</p><p class="mt-1.5 text-xs leading-5 text-terminal-secondary">维港消费占组合 12.4%，规则上限为 10%</p></div>
+                <span class="shrink-0 rounded border border-terminal-warning/40 px-1.5 py-0.5 text-[10px] text-terminal-warning">中</span>
+              </div>
+              <button class="mt-3 text-xs font-medium text-terminal-blue">查看持仓</button>
+            </article>
+            <article class="bg-terminal-surface p-3.5">
+              <div class="flex items-start justify-between gap-3">
+                <div><p class="text-xs font-semibold text-terminal-warning">研究记录过期</p><p class="mt-1.5 text-xs leading-5 text-terminal-secondary">南湾医药的投资逻辑 34 天未复核</p></div>
+                <span class="shrink-0 rounded border border-terminal-warning/40 px-1.5 py-0.5 text-[10px] text-terminal-warning">中</span>
+              </div>
+              <button class="mt-3 text-xs font-medium text-terminal-blue">更新逻辑</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="grid min-w-0 gap-5 py-5 2xl:grid-cols-[minmax(0,1.6fr)_minmax(380px,0.75fr)]">
+          <div class="min-w-0 space-y-5">
+            <article class="overflow-hidden rounded-md border border-terminal-line bg-terminal-surface">
+              <div class="flex flex-col gap-3 border-b border-terminal-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-sm font-semibold">观察列表与持仓</h2>
+                    <span class="rounded border border-terminal-line px-1.5 py-0.5 text-[10px] text-terminal-muted">示例数据</span>
+                  </div>
+                  <p class="mt-1 text-[11px] text-terminal-muted">按风险状态排序</p>
+                </div>
+                <div class="flex gap-1 overflow-x-auto text-xs">
+                  <button class="shrink-0 rounded bg-terminal-raised px-2.5 py-1.5 font-medium">全部 6</button>
+                  <button class="shrink-0 rounded px-2.5 py-1.5 text-terminal-secondary hover:bg-terminal-raised">持仓 4</button>
+                  <button class="shrink-0 rounded px-2.5 py-1.5 text-terminal-secondary hover:bg-terminal-raised">观察 2</button>
+                  <button class="shrink-0 rounded px-2.5 py-1.5 text-terminal-warning hover:bg-terminal-raised">有提醒 3</button>
+                </div>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full min-w-[940px] text-left text-[12px]">
+                  <thead class="bg-terminal-raised text-[10px] font-medium text-terminal-muted">
+                    <tr>
+                      <th class="sticky left-0 z-10 bg-terminal-raised px-4 py-2.5">标的</th>
+                      <th class="px-3 py-2.5 text-right">现价</th>
+                      <th class="px-3 py-2.5 text-right">今日涨跌</th>
+                      <th class="px-3 py-2.5 text-right">仓位</th>
+                      <th class="px-3 py-2.5">逻辑状态</th>
+                      <th class="px-3 py-2.5">估值区间</th>
+                      <th class="px-3 py-2.5">下一催化剂</th>
+                      <th class="px-4 py-2.5">风险</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="cursor-pointer border-t border-terminal-line bg-terminal-blue/[0.07] hover:bg-terminal-hover">
+                      <td class="sticky left-0 z-10 bg-[#151c25] px-4 py-3"><p class="font-semibold">03888 远岚科技</p><p class="mt-0.5 text-[10px] text-terminal-muted">持仓</p></td>
+                      <td class="px-3 py-3 text-right font-mono">HK$ 76.40</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-down">-4.8%</td>
+                      <td class="px-3 py-3 text-right font-mono">8.6%</td>
+                      <td class="px-3 py-3"><span class="text-terminal-danger">减弱</span></td>
+                      <td class="px-3 py-3 font-mono">68-92</td>
+                      <td class="px-3 py-3">中期业绩，日期待确认</td>
+                      <td class="px-4 py-3"><span class="rounded border border-terminal-danger/40 px-1.5 py-1 text-[10px] text-terminal-danger">卖出条件触发</span></td>
+                    </tr>
+                    <tr class="border-t border-terminal-line hover:bg-terminal-hover">
+                      <td class="sticky left-0 bg-terminal-surface px-4 py-3"><p class="font-semibold">02168 维港消费</p><p class="mt-0.5 text-[10px] text-terminal-muted">持仓</p></td>
+                      <td class="px-3 py-3 text-right font-mono">HK$ 42.15</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-up">+1.2%</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-warning">12.4%</td>
+                      <td class="px-3 py-3"><span class="text-terminal-secondary">待验证</span></td>
+                      <td class="px-3 py-3 font-mono">36-48</td>
+                      <td class="px-3 py-3">新品数据，7 月上旬</td>
+                      <td class="px-4 py-3"><span class="rounded border border-terminal-warning/40 px-1.5 py-1 text-[10px] text-terminal-warning">仓位超限</span></td>
+                    </tr>
+                    <tr class="border-t border-terminal-line hover:bg-terminal-hover">
+                      <td class="sticky left-0 bg-terminal-surface px-4 py-3"><p class="font-semibold">06932 南湾医药</p><p class="mt-0.5 text-[10px] text-terminal-muted">持仓</p></td>
+                      <td class="px-3 py-3 text-right font-mono">HK$ 118.70</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-down">-1.6%</td>
+                      <td class="px-3 py-3 text-right font-mono">7.1%</td>
+                      <td class="px-3 py-3"><span class="text-terminal-warning">需复核</span></td>
+                      <td class="px-3 py-3 font-mono">110-138</td>
+                      <td class="px-3 py-3">临床更新，时间未定</td>
+                      <td class="px-4 py-3"><span class="rounded border border-terminal-line px-1.5 py-1 text-[10px] text-terminal-secondary">记录过期</span></td>
+                    </tr>
+                    <tr class="border-t border-terminal-line hover:bg-terminal-hover">
+                      <td class="sticky left-0 bg-terminal-surface px-4 py-3"><p class="font-semibold">00618 北岸物流</p><p class="mt-0.5 text-[10px] text-terminal-muted">持仓</p></td>
+                      <td class="px-3 py-3 text-right font-mono">HK$ 15.84</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-up">+0.6%</td>
+                      <td class="px-3 py-3 text-right font-mono">5.2%</td>
+                      <td class="px-3 py-3"><span class="text-terminal-secondary">成立</span></td>
+                      <td class="px-3 py-3 font-mono">14-18</td>
+                      <td class="px-3 py-3">月度运量，6 月底</td>
+                      <td class="px-4 py-3 text-terminal-muted">无新增提醒</td>
+                    </tr>
+                    <tr class="border-t border-terminal-line hover:bg-terminal-hover">
+                      <td class="sticky left-0 bg-terminal-surface px-4 py-3"><p class="font-semibold">08227 启明材料</p><p class="mt-0.5 text-[10px] text-terminal-muted">观察</p></td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-muted">报价不可用</td>
+                      <td class="px-3 py-3 text-right font-mono text-terminal-muted">暂无</td>
+                      <td class="px-3 py-3 text-right font-mono">0%</td>
+                      <td class="px-3 py-3"><span class="text-terminal-muted">未建立</span></td>
+                      <td class="px-3 py-3 text-terminal-muted">未提供</td>
+                      <td class="px-3 py-3">复牌时间未定</td>
+                      <td class="px-4 py-3"><span class="rounded border border-terminal-warning/40 px-1.5 py-1 text-[10px] text-terminal-warning">停牌</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2 border-t border-terminal-line px-4 py-2.5 text-[10px] text-terminal-muted">
+                <span>行情与估值均为设计示例，不构成投资建议</span>
+                <span>最后同步：今日 16:08</span>
+              </div>
+            </article>
+
+            <article class="rounded-md border border-terminal-line bg-terminal-surface">
+              <div class="flex items-center justify-between border-b border-terminal-line px-4 py-3">
+                <div>
+                  <h2 class="text-sm font-semibold">最近交易复盘</h2>
+                  <p class="mt-1 text-[11px] text-terminal-muted">评价决策过程，不只看短期盈亏</p>
+                </div>
+                <button class="text-xs font-medium text-terminal-blue">查看全部</button>
+              </div>
+              <div class="grid gap-px bg-terminal-line md:grid-cols-3">
+                <div class="bg-terminal-surface p-4">
+                  <div class="flex items-center justify-between gap-3"><p class="text-xs font-semibold">远岚科技加仓</p><span class="text-[10px] text-terminal-muted">6 月 12 日</span></div>
+                  <p class="mt-2 text-xs leading-5 text-terminal-secondary">买入理由未覆盖毛利率下行，证据不足。</p>
+                  <div class="mt-3 flex items-center justify-between"><span class="text-[10px] text-terminal-warning">流程待改进</span><button class="text-[11px] text-terminal-blue">补充复盘</button></div>
+                </div>
+                <div class="bg-terminal-surface p-4">
+                  <div class="flex items-center justify-between gap-3"><p class="text-xs font-semibold">北岸物流建仓</p><span class="text-[10px] text-terminal-muted">5 月 28 日</span></div>
+                  <p class="mt-2 text-xs leading-5 text-terminal-secondary">按估值下沿分批买入，仓位符合预设。</p>
+                  <div class="mt-3 flex items-center justify-between"><span class="text-[10px] text-terminal-down">流程符合规则</span><button class="text-[11px] text-terminal-blue">查看记录</button></div>
+                </div>
+                <div class="bg-terminal-surface p-4">
+                  <div class="flex items-center justify-between gap-3"><p class="text-xs font-semibold">维港消费减仓</p><span class="text-[10px] text-terminal-muted">5 月 16 日</span></div>
+                  <p class="mt-2 text-xs leading-5 text-terminal-secondary">执行后再次加仓，当前仓位重新超限。</p>
+                  <div class="mt-3 flex items-center justify-between"><span class="text-[10px] text-terminal-warning">规则执行中断</span><button class="text-[11px] text-terminal-blue">更新规则</button></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <aside class="min-w-0 space-y-5">
+            <article class="rounded-md border border-terminal-line bg-terminal-surface">
+              <div class="border-b border-terminal-line px-4 py-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div class="flex flex-wrap items-center gap-2"><h2 class="text-base font-semibold">03888 远岚科技</h2><span class="rounded border border-terminal-danger/40 px-1.5 py-0.5 text-[10px] text-terminal-danger">逻辑减弱</span></div>
+                    <p class="mt-1 text-[11px] text-terminal-muted">持仓 8.6% | 最近复核 6 月 18 日</p>
+                  </div>
+                  <div class="text-right"><p class="font-mono text-lg font-semibold">HK$ 76.40</p><p class="mt-0.5 font-mono text-xs text-terminal-down">-4.8%</p></div>
+                </div>
+              </div>
+
+              <div class="space-y-4 p-4">
+                <section>
+                  <div class="mb-2 flex items-center justify-between"><h3 class="text-xs font-semibold">买入理由</h3><button class="text-[11px] text-terminal-blue">编辑</button></div>
+                  <p class="text-xs leading-5 text-terminal-secondary">海外企业服务收入保持增长，续费率改善可带动经营杠杆。计划持有 12-24 个月。</p>
+                  <p class="mt-2 text-[10px] text-terminal-muted">记录于 3 月 14 日 | 证据：两期业绩记录</p>
+                </section>
+
+                <section class="border-t border-terminal-line pt-4">
+                  <div class="mb-2 flex items-center justify-between"><h3 class="text-xs font-semibold">投资逻辑追踪</h3><span class="text-[10px] text-terminal-danger">1 项假设失效</span></div>
+                  <div class="space-y-2 text-xs">
+                    <div class="grid grid-cols-[78px_1fr] gap-3"><span class="text-terminal-muted">关键假设</span><span class="text-terminal-secondary">毛利率维持 42% 以上</span></div>
+                    <div class="grid grid-cols-[78px_1fr] gap-3"><span class="text-terminal-muted">最新证据</span><span class="text-terminal-danger">连续两个季度低于 42%</span></div>
+                    <div class="grid grid-cols-[78px_1fr] gap-3"><span class="text-terminal-muted">反方证据</span><span class="text-terminal-secondary">云服务价格竞争加剧</span></div>
+                    <div class="grid grid-cols-[78px_1fr] gap-3"><span class="text-terminal-muted">下次复核</span><span class="text-terminal-secondary">中期业绩后 2 个交易日内</span></div>
+                  </div>
+                </section>
+
+                <section class="border-t border-terminal-line pt-4">
+                  <div class="mb-2 flex items-center justify-between"><h3 class="text-xs font-semibold">卖出条件</h3><button class="text-[11px] text-terminal-blue">更新条件</button></div>
+                  <div class="space-y-2">
+                    <div class="rounded border border-terminal-danger/35 bg-terminal-danger/[0.06] p-2.5"><div class="flex items-start justify-between gap-3"><p class="text-xs leading-5">连续两个季度毛利率低于 42%</p><span class="shrink-0 text-[10px] font-medium text-terminal-danger">已触发</span></div></div>
+                    <div class="rounded border border-terminal-line p-2.5"><div class="flex items-start justify-between gap-3"><p class="text-xs leading-5 text-terminal-secondary">管理层下调全年收入指引</p><span class="shrink-0 text-[10px] text-terminal-muted">未触发</span></div></div>
+                    <div class="rounded border border-terminal-warning/35 bg-terminal-warning/[0.05] p-2.5"><div class="flex items-start justify-between gap-3"><p class="text-xs leading-5">持仓超过组合 10%</p><span class="shrink-0 text-[10px] text-terminal-warning">接近</span></div></div>
+                  </div>
+                </section>
+
+                <section class="border-t border-terminal-line pt-4">
+                  <div class="mb-3 flex items-center justify-between"><h3 class="text-xs font-semibold">估值区间</h3><span class="text-[10px] text-terminal-muted">更新于 6 月 18 日</span></div>
+                  <div class="relative pt-5">
+                    <div class="valuation-track h-1.5 rounded-full"></div>
+                    <div class="absolute left-[42%] top-0 -translate-x-1/2 text-center"><span class="block font-mono text-[10px] text-terminal-blue">76.40</span><span class="mx-auto mt-1 block h-3 w-px bg-terminal-blue"></span></div>
+                    <div class="mt-2 grid grid-cols-3 font-mono text-[10px] text-terminal-muted"><span>悲观 58</span><span class="text-center text-terminal-down">合理 68-92</span><span class="text-right">乐观 108</span></div>
+                  </div>
+                  <p class="mt-3 text-[10px] leading-4 text-terminal-muted">分部估值。假设 FY2027 经调整利润增长 8%-12%。用户自设，不代表市场预测。</p>
+                </section>
+
+                <button class="w-full rounded-md border border-terminal-danger/50 bg-terminal-danger/[0.08] px-3 py-2.5 text-xs font-semibold text-terminal-danger hover:bg-terminal-danger/[0.12]">记录本次持有决定</button>
+              </div>
+            </article>
+          </aside>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
