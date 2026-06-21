@@ -1,5 +1,7 @@
 # Golden Case: AI Review / Human Approval Workflow
 
+This is an optional `Review Queue` case overlay, not a core page type or default contract.
+
 ## Selected contract
 
 `AI Review / Human Approval Workflow` for a procurement and legal team reviewing supplier-contract changes.

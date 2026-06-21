@@ -1,93 +1,98 @@
 ---
 name: aesthetic-skill-cn
-description: Enforce an Anti-AI Style Gate when designing, implementing, rewriting, or reviewing Chinese product UI. Use for Chinese Web SaaS, finance research dashboards, Xiaohongshu creator tools, enterprise workspaces, local-business interfaces, and other product surfaces that must avoid fake SaaS copy, generic dashboards, card-grid slop, decorative previews, translated Chinese, unsupported metrics, and generic AI visual tells.
+description: Constrain AI-generated product UI before implementation and reject generic AI-looking output. Use when designing, implementing, rewriting, or reviewing workbenches, review queues, admin tables, content calendars, form flows, dashboard workspaces, service landing pages, or mobile H5 interfaces that must avoid fake SaaS structure, card-grid slop, decorative previews, vague copy, unsupported metrics, and workflow-empty polish.
 ---
 
 # Aesthetic Skill CN
 
-Aesthetic Skill CN is a constrained Anti-AI Style Gate for Chinese Product UI.
+Aesthetic Skill CN is a general-purpose Anti-AI Style Skill for AI coding agents.
 
-Do not trust free-form UI generation. Control the page type, structure, modules, states, actions, and visual direction before producing final output.
+Reduce model freedom before generation. Do not rely on free-form taste instructions.
 
-## Hard pre-generation lock
+## Hard rules
 
-Do not generate a final UI until all six fields are selected and recorded:
+Free-form UI generation is not allowed.
+
+Do not generate final UI until every field below is selected and recorded:
 
 ```text
-Contract:
-Page type:
+Task type:
+Output contract:
+Generic page type:
 Layout skeleton:
-Modules:
+Locked modules:
+Visual primitive set:
+Allowed visual primitives:
 Required states:
 User actions:
+Banned patterns:
+Pass criteria:
 ```
 
-If any generated module falls outside the selected contract, the output fails.
+If the UI uses a module or visual primitive outside the selected locks, it fails.
 
-## Controller workflow
+Platform-specific cases are optional overlays. They may add domain fields and constraints, but may not override the core contract, skeleton, locks, or gates.
+
+## Mandatory workflow
 
 Follow every step in order.
 
-### 1. Detect task
+### 1. Detect task type
 
-Infer the requested deliverable, product context, target user, primary object, and decision. Complete [rules/PRODUCT_REALITY_AUDIT.md](rules/PRODUCT_REALITY_AUDIT.md).
+Identify the requested deliverable, product context, target user, primary business object, main decision, runtime, and existing functionality. For product UI, complete [rules/PRODUCT_REALITY_AUDIT.md](rules/PRODUCT_REALITY_AUDIT.md).
 
 ### 2. Select output contract
 
-Read [contracts/OUTPUT_CONTRACTS.md](contracts/OUTPUT_CONTRACTS.md). Select exactly one contract. Free-form UI generation is not allowed.
+Read [contracts/OUTPUT_CONTRACTS.md](contracts/OUTPUT_CONTRACTS.md). Select exactly one contract and record every field. If critical information is missing, ask one focused clarification question.
 
-If no contract fits, ask one clarifying question instead of generating.
+### 3. Select generic page type
 
-### 3. Select allowed page type
-
-Read [contracts/ALLOWED_PAGE_TYPES.md](contracts/ALLOWED_PAGE_TYPES.md). Select one page type. Treat Finance Terminal as WIP / advanced, not public proof.
+Read [contracts/ALLOWED_PAGE_TYPES.md](contracts/ALLOWED_PAGE_TYPES.md). Select one generic page type. Do not treat a platform, industry, or visual style as a page type.
 
 ### 4. Select layout skeleton
 
-Read [contracts/LAYOUT_SKELETONS.md](contracts/LAYOUT_SKELETONS.md). Select one compatible skeleton. Do not add or reorder major regions without a product reason.
+Read [contracts/LAYOUT_SKELETONS.md](contracts/LAYOUT_SKELETONS.md). Select one compatible skeleton. Preserve its hierarchy unless a documented product requirement demands a change.
 
-### 5. Lock modules
+### 5. Select module locks
 
-Read [contracts/MODULE_LOCKS.md](contracts/MODULE_LOCKS.md) and [rules/REAL_CONTENT_LIBRARY.md](rules/REAL_CONTENT_LIBRARY.md). Define every visible module using:
+Read [contracts/MODULE_LOCKS.md](contracts/MODULE_LOCKS.md). Define every visible module using:
 
 ```text
-Module / Purpose / User action / State / Next step / Banned fallback
+Module / Purpose / User action / State / Next step / Reason for existence
 ```
 
 Do not invent generic insight, overview, recommendation, engagement, trend, or performance modules.
 
-### 6. Set Chinese UI dials
+### 6. Select visual primitive locks
 
-Read [rules/CHINESE_UI_DIALS.md](rules/CHINESE_UI_DIALS.md). Set `PRODUCT_REALISM`, `VISUAL_DENSITY`, and `VISUAL_RESTRAINT` from the selected page type defaults.
+Read [contracts/VISUAL_PRIMITIVE_LOCKS.md](contracts/VISUAL_PRIMITIVE_LOCKS.md). Select one primitive set and record its allowed and banned primitives.
 
-### 7. Generate three constrained directions
+If a generated visual primitive is outside the selected lock, reject the output. If making the UI prettier reduces product specificity, choose product specificity.
 
-Read [contracts/STYLE_DIRECTION_PROTOCOL.md](contracts/STYLE_DIRECTION_PROTOCOL.md). Propose three directions inside the same contract. Vary emphasis, density, or module priority, not page type or unlocked modules.
+### 7. Run copy audit
 
-Do not generate full HTML for all three directions unless requested.
+Audit every headline, label, button, status, error, number, capability claim, and empty state before generation. For Chinese UI, apply [rules/COPY_SELF_AUDIT_CN.md](rules/COPY_SELF_AUDIT_CN.md) and [gates/BANNED_AI_PATTERNS_CN.md](gates/BANNED_AI_PATTERNS_CN.md).
 
-### 8. Choose one direction
+Reject vague benefits, translated slogans, unsupported precision, invented capabilities, and labels that do not name an object or action.
 
-When interactive, ask the user to choose. When autonomous, choose the direction with the clearest decision path, strongest negative-state handling, least decorative chrome, and highest Product Swap resistance.
+### 8. Generate constrained directions
+
+Read [contracts/STYLE_DIRECTION_PROTOCOL.md](contracts/STYLE_DIRECTION_PROTOCOL.md). Propose three product-structure directions inside the same locks. Direction names must describe workflow structure, not aesthetic adjectives.
 
 ### 9. Generate output
 
-Generate only the chosen direction. Apply [rules/COPY_SELF_AUDIT_CN.md](rules/COPY_SELF_AUDIT_CN.md), relevant platform rules, and [rules/VISUAL_DENSITY_RULES.md](rules/VISUAL_DENSITY_RULES.md) for proof pages.
-
-Preserve existing functionality unless change is authorized. Label invented data as sample data. Make responsive behavior explicit.
+Generate only the selected direction. Preserve existing functionality unless change is authorized. Mark invented content as sample data. Include responsive behavior where relevant.
 
 ### 10. Run Anti-AI Style Gate
 
-Run [gates/ANTI_AI_STYLE_GATE.md](gates/ANTI_AI_STYLE_GATE.md) and search copy with [gates/BANNED_AI_PATTERNS_CN.md](gates/BANNED_AI_PATTERNS_CN.md).
+Run [gates/ANTI_AI_STYLE_GATE.md](gates/ANTI_AI_STYLE_GATE.md). Audit every visible module and primitive against the recorded locks. One unmatched module or primitive fails the output.
 
-Also audit every visible top-level module against the locked module list. One unmatched module fails.
+### 11. Rewrite if failed
 
-### 11. Run Non-AI Style Scorecard
+Use [gates/OUTPUT_REWRITE_PROTOCOL.md](gates/OUTPUT_REWRITE_PROTOCOL.md). Rewrite within the same contract, page type, skeleton, module locks, and primitive locks. Do not add decoration or modules to hide a failure. Maximum three passes.
 
-Use [gates/NON_AI_STYLE_SCORECARD.md](gates/NON_AI_STYLE_SCORECARD.md). Require average `>= 8.0 / 10` and every category `>= 6 / 10`.
+### 12. Score before final
 
-### 12. Rewrite if failed
+Use [gates/NON_AI_STYLE_SCORECARD.md](gates/NON_AI_STYLE_SCORECARD.md). Require an average score of at least `8.0 / 10` and every category at least `6 / 10`. Then run [gates/FINAL_QUALITY_GATE_CN.md](gates/FINAL_QUALITY_GATE_CN.md) for Chinese output.
 
-Use [gates/OUTPUT_REWRITE_PROTOCOL.md](gates/OUTPUT_REWRITE_PROTOCOL.md). Rewrite within the same contract and skeleton. Do not solve failure by adding new modules. Maximum three passes.
-
-Then run [gates/FINAL_QUALITY_GATE_CN.md](gates/FINAL_QUALITY_GATE_CN.md). Do not present failed output as final.
+Do not present failed output as final.

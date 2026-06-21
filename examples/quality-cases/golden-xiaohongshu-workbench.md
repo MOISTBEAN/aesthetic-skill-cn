@@ -1,5 +1,7 @@
 # Golden Case: Xiaohongshu Creator Workbench
 
+This is an optional `Content Calendar` case overlay, not a core page type or default contract.
+
 ## Selected contract
 
 `Xiaohongshu Creator Workbench` for a three-person home-content team planning one week of posts and brand deliverables.

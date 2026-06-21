@@ -1,59 +1,68 @@
 # Style Direction Protocol
 
-Before final UI generation, propose three constrained directions. Do not generate one free-form page.
+Before final UI generation, propose three constrained directions. Do not generate a free-form page.
 
-Do not generate full HTML for all three directions unless the user requests it.
+Direction names must describe product structure, not visual taste.
+
+Bad names:
+
+- premium
+- clean
+- modern
+- minimalist
+
+Good names:
+
+- Review Queue First
+- Table-First Operations
+- Calendar + Detail
+- Form Flow with Audit Trail
+- Service Booking Flow
+- Internal Workbench
 
 ## Direction record
 
 Each direction must include:
 
 ```text
-Direction:
-Contract selected:
+Direction name:
+Selected contract:
+Generic page type:
 Layout skeleton:
-Density level:
-Restraint level:
-Modules used:
-Banned patterns avoided:
+Visual primitive set:
+Locked modules:
+Required states:
+User actions:
+Banned AI patterns avoided:
 Why it is less AI-like:
+Remaining AI-style risk:
 ```
 
-All three directions must stay inside the same selected contract. Vary emphasis, density, or module priority; do not invent new page types or modules.
+All three directions must remain inside the same contract, page type, module locks, and compatible primitive sets. Vary workflow emphasis, information order, density, or module priority. Do not vary only colors, typefaces, radii, or decoration.
 
-## Interaction rule
+Do not generate full HTML for all three directions unless requested.
 
-When working interactively, ask the user to choose one direction before generating final UI.
+## Selection rule
 
-When running autonomously, select the least generic direction. Prefer the direction with the clearest decision path, strongest negative-state handling, fewest decorative containers, and highest Product Swap resistance. State the choice internally before generation.
+When interactive, ask the user to choose one direction before generating final UI.
 
-## Example directions
+When autonomous, choose the direction with:
 
-### Direction A: 运营工作台型
+1. the clearest primary decision
+2. the strongest negative-state handling
+3. the shortest path from exception to action
+4. the fewest decorative containers
+5. the highest Product Swap resistance
 
-- Contract: Xiaohongshu Creator Workbench
-- Skeleton: Calendar + Detail Layout
-- Emphasis: calendar, status queue, mobile preview
-- Why less AI-like: the page is organized by publishing decisions instead of engagement metrics
-
-### Direction B: 编辑复核型
-
-- Contract: Xiaohongshu Creator Workbench
-- Skeleton: Workbench Layout
-- Emphasis: pending revisions, selected note detail, concrete next actions
-- Why less AI-like: negative states and revision ownership dominate the first viewport
-
-### Direction C: 轻 CRM 型
-
-- Contract: Xiaohongshu Creator Workbench
-- Skeleton: Workbench Layout
-- Emphasis: brand collaboration pipeline, delivery status, approval deadlines
-- Why less AI-like: business commitments replace generic creator-growth cards
+Record the choice before generation.
 
 ## Failure conditions
 
 - only one direction was considered
-- directions use different contracts
-- a direction adds unlocked modules
-- differences are merely color palettes
-- the chosen direction is not recorded
+- directions use different contracts or page types
+- a direction adds unlocked modules or primitives
+- names are aesthetic adjectives
+- differences are merely color palettes or styling
+- required states and actions are omitted
+- remaining AI-style risk is not acknowledged
+- the selected direction is not recorded

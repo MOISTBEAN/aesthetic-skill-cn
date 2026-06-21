@@ -1,47 +1,96 @@
-# aesthetic-skill-cn
+# Stop generating AI-looking UI.
 
-A constrained Anti-AI Style Gate for Chinese Product UI, built for Cursor, Claude Code, Codex, and other coding agents.
+Aesthetic Skill CN is a general-purpose **Anti-AI Style Skill for AI coding agents**.
 
-Most AI-generated Chinese interfaces do not fail because they are ugly. They fail because they are generic.
+It does not rely on vague taste advice such as “make it premium,” “make it clean,” or “make it modern.” Instead, it reduces model freedom before generation through:
 
-This project does not trust free-form AI UI generation. It reduces model freedom by locking the output contract, allowed page type, modules, layout skeleton, required states, and user actions before generation.
+1. Output Contracts
+2. Layout Skeletons
+3. Module Locks
+4. Visual Primitive Locks
+5. Copy Audit
+6. Anti-AI Style Gate
+7. Rewrite Until Pass
 
-> If changing the product name leaves the interface credible, the output fails.
+> Stop generating AI-looking UI by reducing the model’s freedom before it writes the interface.
+
+The goal is not to make UI prettier. The goal is to prevent generic AI-looking interfaces:
+
+- gradient hero sections
+- fake SaaS dashboards
+- six-card feature grids
+- decorative product previews
+- vague AI copy
+- fake precision metrics
+- over-polished but workflow-empty pages
+
+## What this is
+
+This is not a prompt collection and not a UI component library. It is an AI-readable constraint system for Cursor, Claude Code, Codex, and other coding agents.
+
+Before an agent can write final UI, it must select a contract, generic page type, layout skeleton, locked modules, allowed visual primitives, required states, user actions, and banned patterns. Free-form UI generation is not allowed.
 
 ## Core gates
 
-1. **Product Swap Test**: if renaming the product leaves the interface credible, it fails.
-2. **Banned AI Defaults**: reject gradient theater, fake dashboards, equal feature-card grids, translated slogans, and unsupported precision.
-3. **Real Workflow Requirement**: require a visible check, comparison, approval, review, or decision.
-4. **Negative State Requirement**: require a relevant pending, warning, failed, risk, changed, or needs-review state.
-5. **Rewrite Until Pass**: failed output cannot be presented as final; rewrite it and run every gate again.
+1. **Product Swap Test:** if renaming the product leaves the interface credible, it fails.
+2. **Banned AI Defaults:** reject gradient theater, fake dashboards, equal feature-card grids, decorative mockups, and unsupported precision.
+3. **Real Workflow Requirement:** require visible objects, actions, states, exceptions, and next steps.
+4. **Negative State Requirement:** require a relevant pending, warning, failed, blocked, rejected, or changed state.
+5. **Rewrite Until Pass:** failed output cannot be presented as final; rewrite it under the same locks and run every gate again.
 
 ## Constrained pipeline
 
-Every output must pass through:
+```text
+Task
+  -> Output Contract
+  -> Generic Page Type
+  -> Layout Skeleton
+  -> Module Locks
+  -> Visual Primitive Locks
+  -> Copy Audit
+  -> 3 Constrained Directions
+  -> Output
+  -> Anti-AI Style Gate
+  -> Rewrite Until Pass
+  -> Score Before Final
+```
 
-1. output contract
-2. allowed page type
-3. module lock
-4. layout skeleton
-5. three constrained directions and one recorded choice
-6. Anti-AI Style Gate
-7. rewrite protocol
+Start with [`SKILL.md`](SKILL.md). The primary controls live in [`contracts/`](contracts/), hard failure tests live in [`gates/`](gates/), and supporting audits live in [`rules/`](rules/).
 
-Free-form UI generation is not allowed. If no contract fits, the agent asks one clarifying question instead of inventing a page.
+## Generic page types
 
-Public v0.2 contracts prioritize:
+The core supports Internal Workbench, Review Queue, Admin Table, Content Calendar, Form Flow, Dashboard Workspace, Service Landing, and Mobile H5.
 
-1. Xiaohongshu Creator Workbench
-2. AI Review / Human Approval Workflow
-3. Local Business Clean Landing Page
+Xiaohongshu creator operations, AI human approval, local business, and finance are optional case packs. They demonstrate how the general system can be applied; they do not define the core skill. Finance remains an advanced WIP case.
 
-Finance Terminal remains an advanced WIP case and is not the primary proof.
+## Repository map
 
-## Start
+- [`contracts/OUTPUT_CONTRACTS.md`](contracts/OUTPUT_CONTRACTS.md): required pre-generation contract
+- [`contracts/ALLOWED_PAGE_TYPES.md`](contracts/ALLOWED_PAGE_TYPES.md): generic page types and compatibility rules
+- [`contracts/LAYOUT_SKELETONS.md`](contracts/LAYOUT_SKELETONS.md): fixed structural hierarchies
+- [`contracts/MODULE_LOCKS.md`](contracts/MODULE_LOCKS.md): allowed product modules
+- [`contracts/VISUAL_PRIMITIVE_LOCKS.md`](contracts/VISUAL_PRIMITIVE_LOCKS.md): allowed and banned visual building blocks
+- [`contracts/STYLE_DIRECTION_PROTOCOL.md`](contracts/STYLE_DIRECTION_PROTOCOL.md): three constrained structural directions
+- [`gates/ANTI_AI_STYLE_GATE.md`](gates/ANTI_AI_STYLE_GATE.md): hard rejection tests
+- [`gates/NON_AI_STYLE_SCORECARD.md`](gates/NON_AI_STYLE_SCORECARD.md): score required before final
+- [`examples/quality-cases/`](examples/quality-cases/): rejected and passing text cases
 
-Point your coding agent to `SKILL.md` and describe the real product context. The controller selects from `contracts/`, applies `rules/`, and blocks generic output through `gates/ANTI_AI_STYLE_GATE.md`.
+Existing examples, screenshots, presets, and platform rules remain available as reference material. They are evidence and overlays, not the product definition.
 
-This is not a prompt collection or UI component library. It is an AI-readable quality gate with product-reality rules, rewrite protocols, review criteria, existing style references, and Before/After evidence. It is not a SaaS application.
+## Minimal usage
 
-Rejected and golden text cases live in `examples/quality-cases/`. Finance rules remain available, but no finance screenshot represents the gate itself.
+```text
+Read aesthetic-skill-cn/SKILL.md.
+Design an internal review queue for a team that approves supplier changes.
+Do not generate UI until the contract, generic page type, skeleton,
+module locks, visual primitive set, states, actions, and banned patterns are recorded.
+Run the Anti-AI Style Gate and rewrite until it passes.
+```
+
+## Ethics
+
+Use the system to improve product specificity, not to copy proprietary layouts, screenshots, brand assets, or visual identities. Do not invent metrics, customer claims, capabilities, integrations, or success states.
+
+## Status
+
+v0.2 generalizes the project around constrained generation. Current case packs remain useful, but the next validation target is whether the same contracts and gates produce credible interfaces across unrelated products.
